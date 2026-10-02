@@ -41,3 +41,14 @@ test("accepts any method", async () => {
 		assert.equal(await res.text(), "{}");
 	}
 });
+
+test("returns empty body when JSON is explicitly refused with q=0", async () => {
+	const res = await call({ headers: { Accept: "text/html, application/json;q=0" } });
+	assert.equal(res.status, 200);
+	assert.equal(await res.text(), "");
+});
+
+test("sets Vary: Accept on all responses", async () => {
+	assert.equal((await call({ headers: { Accept: "application/json" } })).headers.get("Vary"), "Accept");
+	assert.equal((await call()).headers.get("Vary"), "Accept");
+});
